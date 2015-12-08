@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
+
+        <style type="text/css">
+            #nav{
+                /*
+                background : -webkit-linear-gradient(top, #339966 0%, #3fc080 100%);
+                background : -moz-linear-gradient(top, #339966 0%, #3fc080 100%);
+                background : -ms-linear-gradient(top, #339966 0%, #3fc080 100%);
+                background : -o-linear-gradient(top, #339966 0%, #3fc080 100%);
+                background : linear-gradient(top, #339966 0%, #3fc080 100%);
+                */
+            }
+        </style>
+
+        <title>Cheque</title>
+
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <script type="text/javascript">
+            var clear = true;
+            var hkstyle = true;
+
+            var cents=['','Ten','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+            var ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine'];
+            var tens=['','','Twenty','Thirty','Torty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+            var teens=['Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+            // 佰、仟、萬、億、元
+            var ones_zh=['','壹','貳','叄','肆','伍','陸','柒','捌','玖'];
+            var tens_zh=['','拾','貳拾','叄拾','肆拾','伍拾','陸拾','柒拾','捌拾','玖拾'];
+            var unit_zh=['角','圓','整','毫','元','正'];
+
+
+            function convert_millions(num){
+                if (num>=1000000){
+                    return convert_millions(Math.floor(num/1000000))+" million "+convert_thousands(num%1000000);
+                }
+                else {
+                    return convert_thousands(num);
+                }
+            }
+
+            function convert_thousands(num){
+                if (num>=1000){
+                    return convert_hundreds(Math.floor(num/1000))+" thousand "+convert_hundreds(num%1000);
+                }
+                else{
+                    return convert_hundreds(num);
+                }
+            }
+
+            function convert_hundreds(num){
+                if (num>99){
+                    var value = convert_tens(num%100);
+                    var main = ones[Math.floor(num/100)]+" hundred ";
+                    //return (value != '')?main+value:"And "+main;
+                    return main+value;
+                }
+                else{
+                    return convert_tens(num);
+                }
+            }
+
+            function convert_tens(num){
+                if (num<10) return ones[num];
+                else if (num>=10 && num<20) return teens[num-10];
+                else{
+                    return tens[Math.floor(num/10)]+" "+ones[num%10];
+                }
+            }
+
+            function convert_cents(num){
+                if (num == undefined) return "";
+                else if (num == 0) return "";
+                else if (num<10) return "and "+cents[num]+" cents";
+                else if (num>=10 && num<=90) return "and "+cents[Math.floor(num/10)]+" cents";
+                else{
+                    num = String(num).substr(0, 2);
+                    return "and "+cents[Math.floor(num/10)]+" cents";
+                }
+            }
+
+            function convert(num){
+                if(check(num)){
+                    var cents = 0;
+                    try{
+                        tmp = num;
+                        num = String(num).split(".")[0];
+                        cents = String(tmp).split(".")[1];
+
+
+                        if (num==0){
+                            $("#result_eng").text("Zero"+" Dollars Only");
+                        }else {
+                            $("#result_eng").text(convert_millions(num)+" Dollars "+convert_cents(cents)+" Only");
+                        }
+                        
+
+                        //zh
+                        convert_zh(tmp);
+
+                    }catch(e){ }
+                }    
+            }
+
+            // ------ 
+
+            function convert_yik(num){
+                if (num>=100000000){
+                    return convert_yik(Math.floor(num/100000000))+"億"+convert_maan(num%100000000);
+                }
+                else {
+                    return convert_maan(num);
+                }
+            }
+
+            function convert_maan(num){
+                if (num>=10000){
+                    return convert_chin(Math.floor(num/10000))+"萬"+convert_chin(num%10000);
+                }
+                else{
+                    return convert_chin(num);
+                }
+            }
+
+            function convert_chin(num){
+                if (num>=1000){
+                    return convert_bak(Math.floor(num/1000))+"仟"+convert_bak(num%1000);
+                }
+                else{
+                    return convert_bak(num);
+                }
+            }
+
+            function convert_bak(num){
+                if (num>=100){
+                    return convert_sap(Math.floor(num/100))+"佰"+convert_sap(num%100);
+                }
+                else{
+                    return convert_sap(num);
+                }
+            }
+
+            function convert_sap(num){
+                if (num<10) return ones_zh[num];
+                else{
+                    return tens_zh[Math.floor(num/10)]+""+ones_zh[num%10];
+                }
+            }
+
+            function convert_hoji(num){
+                if (num == undefined) return "";
+                else if (num == 0) return "";
+                else if (num<10) return ones_zh[num]+((hkstyle)?unit_zh[3]:unit_zh[0]);
+                else if (num>=10 && num<=90) return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0]);
+                else{
+                    num = String(num).substr(0, 2);
+                    return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0]);
+                }
+            }
+
+            function convert_zh(num){
+                var cents = 0;
+                try{
+                    tmp = num;
+                    num = String(num).split(".")[0];
+                    cents = String(tmp).split(".")[1];
+
+                    if (num==0){
+                        $("#result_zh").text("零"+((hkstyle)?unit_zh[4]:unit_zh[1])+((hkstyle)?unit_zh[5]:unit_zh[2]));
+                    }else {
+                        $("#result_zh").text(convert_yik(num)+((hkstyle)?unit_zh[4]:unit_zh[1])+convert_hoji(cents)+((hkstyle)?unit_zh[5]:unit_zh[2]));
+                    }
+                }catch(e){}
+            }
+
+            function changeclear(){
+                if(clear == true){
+                    clear = false;
+                    $("#setting-clear").text("點擊輸入欄時自動清除");
+                }else{
+                    clear = true;
+                    $("#setting-clear").text("點擊輸入欄時不要自動清除"); 
+                }
+                $('.navbar-toggle').click();
+            }
+
+            function changehkstyle(){
+                if(hkstyle == true){
+                    hkstyle = false;
+                    $("#setting-hkstyle").text("港式中文大寫");
+                    $("#zh_panel").text("正統中文大寫");
+                }else{
+                    hkstyle = true;
+                    $("#setting-hkstyle").text("正統中文大寫");
+                    $("#zh_panel").text("港式中文大寫");
+                }
+                convert(document.getElementById('moneyinput').value);
+                $('.navbar-toggle').click();
+            }
+
+
+            function check(num){
+                if (num == undefined || num == null || num == "") {
+                    $("#result_eng").text("");
+                    $("#result_zh").text("");
+                    $("#warn_panel").show();
+                    $("#warn_msg").text("請輸入正確金額");
+                    return false;
+                }
+
+                if (((String(num).length - String(num).replace(/\./g,'').length)) >= 1) {
+                    var cents = String(num).split(".")[1];
+                    if(cents >= 100){
+                        $("#result_eng").text("");
+                        $("#result_zh").text("");
+                        $("#warn_panel").show();
+                        $("#warn_msg").text("小數點後逾兩個位, 請輸入正確金額");
+                        return false;
+                    }else if(String(cents).length >= 2 && (cents%10) != 0 ){
+                        $("#result_eng").text("");
+                        $("#result_zh").text("");
+                        $("#warn_panel").show();
+                        $("#warn_msg").text("不接受「仙」, 請輸入正確金額, 例如 1888.80");
+                        return false;
+                    }else if(String(cents).length == 1){
+                        $("#warn_panel").show();
+                        $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+"0");
+                        return true;
+                    }else if(String(cents).length > 2){
+                        $("#warn_panel").show();
+                        $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num.split(".")[0]+".00");
+                        return true;
+                    }
+                }
+
+                if (((String(num).length - String(num).replace(/\./g,'').length)) == 0){
+                    $("#warn_panel").show();
+                    $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+".00");
+                    return true;
+                }
+
+                return true;
+            }
+
+            $(document).ready(function() {
+                $("#warn_panel").hide();
+                $("#moneyinput").click(function() {
+                    $("#warn_panel").hide();
+                    if(clear) $("#moneyinput").val("");
+                });
+            });
+
+            //------ADS
+            function onDeviceReady() {
+              admob.createBannerView({
+                  publisherId:"ca-app-pub-9969581706012169/7609471531"
+              });
+            }
+            
+            document.addEventListener("deviceready", onDeviceReady, false);
+
+        </script>
+
+    </head>
+
+    <body>
+        <!--div class="app">
+            <h1>PhoneGap</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div>
+        </div-->
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-fixed-top" id="nav">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header page-scroll">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="glyphicon glyphicon-cog" style="color:white;"></span>
+                    </button>
+                    <a class="navbar-brand" style="font-size:24px; font-family: 'Righteous', cursive;"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開Cheque易</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="hidden">
+                            <a href="#page-top"></a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#" onclick="changeclear();" id="setting-clear">點擊輸入欄時不要自動清除</a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#" onclick="changehkstyle();" id="setting-hkstyle">正統中文大寫</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <header>
+            <div class="container" style="padding:30px 0px;">
+                <!--div class="row">
+                    <div class="col-lg-12">
+                        <div class="intro-text">
+                            <span class="skills">一個俾你了解呢個世界既地方</span>
+                        </div>
+                    </div>
+                </div-->
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="row">
+                <div class="input-group">
+                  <span class="input-group-addon">港幣 HKD $</span>
+                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" style="font-size:16px;">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="convert(document.getElementById('moneyinput').value);"><span class="glyphicon glyphicon-transfer"></span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-default" style="margin: 0px;">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">English</h3>
+                  </div>
+                  <div class="panel-body" style=" text-align:center; font-size:20px;">
+                    <p id="result_eng"></p>
+                  </div>
+                </div>
+
+                <div class="panel panel-default" style="margin: 0px;" >
+                  <div class="panel-heading">
+                    <h3 class="panel-title" id="zh_panel">港式中文大寫</h3>
+                  </div>
+                  <div class="panel-body" style=" text-align:center; font-size:28px;">
+                    <p id="result_zh"></p>
+                  </div>
+                </div>
+
+                <div class="panel panel-warning" style="margin: 0px;" id="warn_panel">
+                  <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;注意</h3>
+                  </div>
+                  <div class="panel-body" style=" text-align:center;">
+                    <p id="warn_msg"></p>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+
+    </body>
+</html>
