@@ -11,14 +11,9 @@
         <link href='https://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
 
         <style type="text/css">
-            #nav{
-                /*
-                background : -webkit-linear-gradient(top, #339966 0%, #3fc080 100%);
-                background : -moz-linear-gradient(top, #339966 0%, #3fc080 100%);
-                background : -ms-linear-gradient(top, #339966 0%, #3fc080 100%);
-                background : -o-linear-gradient(top, #339966 0%, #3fc080 100%);
-                background : linear-gradient(top, #339966 0%, #3fc080 100%);
-                */
+            * {
+              border-radius: 0 !important;
+              -moz-border-radius: 0 !important;
             }
         </style>
 
@@ -209,6 +204,10 @@
                 $('.navbar-toggle').click();
             }
 
+            function about(){
+                $("#about-panel").toggle();
+            }
+
 
             function check(num){
                 if (num == undefined || num == null || num == "") {
@@ -216,6 +215,12 @@
                     $("#result_zh").text("");
                     $("#warn_panel").show();
                     $("#warn_msg").text("請輸入正確金額");
+                    return false;
+                }
+
+                if (num >= 1000000000){
+                    $("#warn_panel").show();
+                    $("#warn_msg").text("你真是富有，輸入金額過大了，請重新輸入");
                     return false;
                 }
 
@@ -254,7 +259,10 @@
             }
 
             $(document).ready(function() {
+                $.support.transition = false;
+
                 $("#warn_panel").hide();
+                $("#about-panel").hide();
                 $("#moneyinput").click(function() {
                     $("#warn_panel").hide();
                     if(clear) $("#moneyinput").val("");
@@ -290,7 +298,7 @@
             <div class="container">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header page-scroll">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" onclick="$('#about-panel').hide();">
                         <span class="glyphicon glyphicon-cog" style="color:white;"></span>
                     </button>
                     <a class="navbar-brand" style="font-size:24px; font-family: 'Righteous', cursive;"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開Cheque易</a>
@@ -307,6 +315,9 @@
                         </li>
                         <li class="page-scroll">
                             <a href="#" onclick="changehkstyle();" id="setting-hkstyle">正統中文大寫</a>
+                        </li>
+                        <li class="page-scroll">
+                            <a href="#" onclick="about();" id="about">關於</a>
                         </li>
                     </ul>
                 </div>
@@ -354,12 +365,27 @@
                   </div>
                 </div>
 
-                <div class="panel panel-warning" style="margin: 0px;" id="warn_panel">
+                <div class="panel panel-danger" style="margin: 0px;" id="warn_panel">
                   <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;注意</h3>
                   </div>
                   <div class="panel-body" style=" text-align:center;">
                     <p id="warn_msg"></p>
+                  </div>
+                </div>
+
+                <div class="panel panel-primary" style="margin: 0px;" id="about-panel">
+                  <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;關於</h3>
+                  </div>
+                  <div class="panel-body" style="font-size:12px;">
+                    <p id="about">
+                        <ul>
+                          <li>開cheque易</li>
+                          <li>Copyright &copy; Seohea Production</li>
+                          <li>版本 1.0.0</li>
+                        </ul>
+                    </p>
                   </div>
                 </div>
             </div>
