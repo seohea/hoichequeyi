@@ -86,7 +86,7 @@
             }
 
             function convert(num){
-                window.analytics.trackEvent('basic', 'press_convert');
+                //window.analytics.trackEvent('basic', 'press_convert');
                 if(check(num)){
                     var cents = 0;
                     try{
@@ -181,7 +181,7 @@
             }
 
             function changeclear(){
-                window.analytics.trackEvent('setting', 'press_autoclear');
+                //window.analytics.trackEvent('setting', 'press_autoclear');
                 if(clear == true){
                     clear = false;
                     $("#setting-clear").text("點擊輸入欄時自動清除");
@@ -193,7 +193,7 @@
             }
 
             function changehkstyle(){
-                window.analytics.trackEvent('setting', 'press_changestyle');
+                //window.analytics.trackEvent('setting', 'press_changestyle');
                 if(hkstyle == true){
                     hkstyle = false;
                     $("#setting-hkstyle").text("港式中文大寫");
@@ -208,7 +208,7 @@
             }
 
             function about(){
-                window.analytics.trackEvent('setting', 'press_about');
+                //window.analytics.trackEvent('setting', 'press_about');
                 $("#about-panel").toggle();
             }
 
