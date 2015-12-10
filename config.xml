@@ -1,4 +1,4 @@
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.seo.cheque" version="1.0.0.4">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.seo.cheque" version="1.0.0.5">
   <name>開cheque易</name>
   <description>一個幫助你填寫支票的小幫手</description>
   <author href="" email="seohea.production@gmail.com">Seohea Production</author>
@@ -25,7 +25,7 @@
   <gap:plugin name="org.apache.cordova.inappbrowser"/>
   <gap:plugin name="org.apache.cordova.network-information"/>
   <gap:plugin name="cordova-admob" source="npm"/>
-  <gap:plugin name="cordova-plugin-google-analytics" source="pgb" />
+  <plugin name="com.danielcwilson.plugins.googleanalytics" spec="0.6.1" source="pgb" />
   <icon src="icon.png"/>
   <icon src="www/res/icon/android/icon-36-ldpi.png" gap:platform="android" gap:qualifier="ldpi"/>
   <icon src="www/res/icon/android/icon-48-mdpi.png" gap:platform="android" gap:qualifier="mdpi"/>
