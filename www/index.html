@@ -67,6 +67,7 @@
             }
 
             function convert_tens(num){
+                num = parseInt(num);
                 if (num<10) return ones[num];
                 else if (num>=10 && num<20) return teens[num-10];
                 else{
@@ -93,8 +94,10 @@
                         num = String(num).split(".")[0];
                         cents = String(tmp).split(".")[1];
 
-                        if (num==0){
+                        if (cents == null && num==0){
                             $("#result_eng").text("Zero"+" Dollars Only");
+                        }else if (cents != null && num==0){
+                            $("#result_eng").text((convert_cents(cents)+" Only").split("and")[1]);
                         }else {
                             $("#result_eng").text(convert_millions(num)+" Dollars "+convert_cents(cents)+" Only");
                         }
@@ -155,7 +158,10 @@
             function convert_hoji(num){
                 if (num == undefined) return "";
                 else if (num == 0) return "";
-                else if (num<10) return ones_zh[num]+((hkstyle)?unit_zh[3]:unit_zh[0]);
+                else if (String(num).length == 2 && parseInt(num) < 10){
+                    num = parseInt(num);
+                    return ones_zh[Math.floor(num%10)]+((hkstyle)?unit_zh[7]:unit_zh[6]);
+                }else if (num<10) return ones_zh[num]+((hkstyle)?unit_zh[3]:unit_zh[0]);
                 else {
                     if(num%10 == 0)
                         return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0]);
@@ -171,8 +177,10 @@
                     num = String(num).split(".")[0];
                     cents = String(tmp).split(".")[1];
 
-                    if (num==0){
+                    if (cents == null && num==0){
                         $("#result_zh").text("零"+((hkstyle)?unit_zh[4]:unit_zh[1])+((hkstyle)?unit_zh[5]:unit_zh[2]));
+                    }else if (cents != null && num==0){
+                        $("#result_zh").text(convert_hoji(cents)+((hkstyle)?unit_zh[5]:unit_zh[2]));
                     }else {
                         $("#result_zh").text(convert_yik(num)+((hkstyle)?unit_zh[4]:unit_zh[1])+convert_hoji(cents)+((hkstyle)?unit_zh[5]:unit_zh[2]));
                     }
@@ -223,14 +231,18 @@
                     return false;
                 }else if (((String(num).length - String(num).replace(/\./g,'').length)) >= 1) {
                     var cents = String(num).split(".")[1];
-                    if(cents >= 100){
+                    if(String(cents).length > 2 || cents >= 100){
                         $("#result_eng").text("");
                         $("#result_zh").text("");
                         $("#warn_panel").show();
                         $("#warn_msg").text("小數點後逾兩個位, 請輸入正確金額");
                         return false;
                     }else{
-                        if(cents<10){
+                        if(String(num).split(".")[0] == 0 && String(num).split(".")[1] == 0){
+                            $("#result_eng").text("");
+                            $("#result_zh").text("");
+                            return false;
+                        }else if(String(cents).length == 1 && cents<10){
                             $("#warn_panel").show();
                             $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+"0");
                         }else{
