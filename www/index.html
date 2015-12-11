@@ -28,12 +28,12 @@
 
             var cents=['','Ten','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
             var ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine'];
-            var tens=['','','Twenty','Thirty','Torty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+            var tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
             var teens=['Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
             // 佰、仟、萬、億、元
             var ones_zh=['','壹','貳','叄','肆','伍','陸','柒','捌','玖'];
             var tens_zh=['','拾','貳拾','叄拾','肆拾','伍拾','陸拾','柒拾','捌拾','玖拾'];
-            var unit_zh=['角','圓','整','毫','元','正'];
+            var unit_zh=['角','圓','整','毫','元','正','分','仙'];
 
 
             function convert_millions(num){
@@ -75,14 +75,14 @@
             }
 
             function convert_cents(num){
-                if (num == undefined) return "";
-                else if (num == 0) return "";
-                else if (num<10) return "and "+cents[num]+" cents";
-                else if (num>=10 && num<=90) return "and "+cents[Math.floor(num/10)]+" cents";
-                else{
-                    num = String(num).substr(0, 2);
-                    return "and "+cents[Math.floor(num/10)]+" cents";
-                }
+                if (num == undefined) 
+                    return "";
+                else if (num == 0) 
+                    return "";
+                else if (String(num).length == 2) 
+                    return "and "+convert_tens(num)+" cents";
+                else if (num<10) 
+                    return "and "+cents[num]+" cents";
             }
 
             function convert(num){
@@ -92,7 +92,6 @@
                         tmp = num;
                         num = String(num).split(".")[0];
                         cents = String(tmp).split(".")[1];
-
 
                         if (num==0){
                             $("#result_eng").text("Zero"+" Dollars Only");
@@ -157,10 +156,11 @@
                 if (num == undefined) return "";
                 else if (num == 0) return "";
                 else if (num<10) return ones_zh[num]+((hkstyle)?unit_zh[3]:unit_zh[0]);
-                else if (num>=10 && num<=90) return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0]);
-                else{
-                    num = String(num).substr(0, 2);
-                    return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0]);
+                else {
+                    if(num%10 == 0)
+                        return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0]);
+                    else
+                        return ones_zh[Math.floor(num/10)]+((hkstyle)?unit_zh[3]:unit_zh[0])+ones_zh[Math.floor(num%10)]+((hkstyle)?unit_zh[7]:unit_zh[6]);
                 }
             }
 
@@ -216,15 +216,12 @@
                     $("#warn_panel").show();
                     $("#warn_msg").text("請輸入正確金額");
                     return false;
-                }
-
-                if (num >= 1000000000){
+                }else if (num >= 1000000000){
                     $("#warn_panel").show();
-                    $("#warn_msg").text("你真是富有，輸入金額過大了，請重新輸入");
+                    $("#warn_msg").text("輸入金額過大了，請重新輸入");
+                    document.getElementById('moneyinput').value = "";
                     return false;
-                }
-
-                if (((String(num).length - String(num).replace(/\./g,'').length)) >= 1) {
+                }else if (((String(num).length - String(num).replace(/\./g,'').length)) >= 1) {
                     var cents = String(num).split(".")[1];
                     if(cents >= 100){
                         $("#result_eng").text("");
@@ -232,29 +229,19 @@
                         $("#warn_panel").show();
                         $("#warn_msg").text("小數點後逾兩個位, 請輸入正確金額");
                         return false;
-                    }else if(String(cents).length >= 2 && (cents%10) != 0 ){
-                        $("#result_eng").text("");
-                        $("#result_zh").text("");
-                        $("#warn_panel").show();
-                        $("#warn_msg").text("不接受「仙」, 請輸入正確金額, 例如 1888.80");
-                        return false;
-                    }else if(String(cents).length == 1){
-                        $("#warn_panel").show();
-                        $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+"0");
-                        return true;
-                    }else if(String(cents).length > 2){
-                        $("#warn_panel").show();
-                        $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num.split(".")[0]+".00");
-                        return true;
+                    }else{
+                        if(cents<10){
+                            $("#warn_panel").show();
+                            $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+"0");
+                        }else{
+                            $("#warn_panel").hide();
+                        }
                     }
-                }
-
-                if (((String(num).length - String(num).replace(/\./g,'').length)) == 0){
+                }else if (((String(num).length - String(num).replace(/\./g,'').length)) == 0){
                     $("#warn_panel").show();
                     $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+".00");
                     return true;
                 }
-
                 return true;
             }
 
@@ -340,10 +327,10 @@
             <div class="row">
                 <div class="input-group">
                   <span class="input-group-addon">港幣 HKD $</span>
-                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" style="font-size:16px;">
-                  <span class="input-group-btn">
+                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" style="font-size:16px;" oninput="convert(this.value);">
+                  <!--span class="input-group-btn">
                     <button class="btn btn-default" type="button" onclick="convert(document.getElementById('moneyinput').value);"><span class="glyphicon glyphicon-transfer"></span></button>
-                  </span>
+                  </span-->
                 </div>
             </div>
             <div class="row">
@@ -351,7 +338,7 @@
                   <div class="panel-heading">
                     <h3 class="panel-title">English</h3>
                   </div>
-                  <div class="panel-body" style=" text-align:center; font-size:20px;">
+                  <div class="panel-body" style=" text-align:center; font-size:22px;">
                     <p id="result_eng"></p>
                   </div>
                 </div>
@@ -374,11 +361,11 @@
                   </div>
                 </div>
 
-                <div class="panel panel-primary" style="margin: 0px;" id="about-panel">
+                <div class="panel panel-primary" style="margin: 0px;" id="about-panel" >
                   <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;關於</h3>
                   </div>
-                  <div class="panel-body" style="font-size:12px;">
+                  <div class="panel-body" style="font-size:15px;">
                     <p id="about">
                         <ul>
                           <li>開cheque易</li>
