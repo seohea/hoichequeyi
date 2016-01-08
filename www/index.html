@@ -190,12 +190,12 @@
             function changeclear(){
                 if(clear == true){
                     clear = false;
-                    $("#setting-clear").text("點擊輸入欄時自動清除");
+                    $("#setting-clear").html("點擊輸入欄時<br>自動清除");
                 }else{
                     clear = true;
-                    $("#setting-clear").text("點擊輸入欄時不要自動清除"); 
+                    $("#setting-clear").html("點擊輸入欄時<br>不要自動清除"); 
                 }
-                $('.navbar-toggle').click();
+                //$('.navbar-toggle').click();
             }
 
             function changehkstyle(){
@@ -209,11 +209,12 @@
                     $("#zh_panel").text("港式中文大寫");
                 }
                 convert(document.getElementById('moneyinput').value);
-                $('.navbar-toggle').click();
+                //$('.navbar-toggle').click();
             }
 
             function about(){
-                $("#about-panel").toggle();
+                $('#aboutModal').modal('toggle');
+                $('.navbar-toggle').click();
             }
 
 
@@ -260,8 +261,6 @@
             $(document).ready(function() {
                 $.support.transition = false;
 
-                $("#warn_panel").hide();
-                $("#about-panel").hide();
                 $("#moneyinput").click(function() {
                     $("#warn_panel").hide();
                     if(clear) $("#moneyinput").val("");
@@ -297,8 +296,8 @@
             <div class="container">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header page-scroll">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" onclick="$('#about-panel').hide();">
-                        <span class="glyphicon glyphicon-cog" style="color:white;"></span>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" style="border: 0px;">
+                        <span class="glyphicon glyphicon-menu-hamburger" style="color:white;"></span>
                     </button>
                     <a class="navbar-brand" style="font-size:24px; font-family: 'Righteous', cursive;"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開Cheque易</a>
                 </div>
@@ -309,14 +308,14 @@
                         <li class="hidden">
                             <a href="#page-top"></a>
                         </li>
-                        <li class="page-scroll">
+                        <!--li class="page-scroll">
                             <a href="#" onclick="changeclear();" id="setting-clear">點擊輸入欄時不要自動清除</a>
                         </li>
                         <li class="page-scroll">
                             <a href="#" onclick="changehkstyle();" id="setting-hkstyle">正統中文大寫</a>
-                        </li>
+                        </li-->
                         <li class="page-scroll">
-                            <a href="#" onclick="about();" id="about">關於</a>
+                            <a href="#" onclick="about();" id="about" style="font-size:18px;"><span class="glyphicon glyphicon-question-sign" style="color:#99cc00"></span>&nbsp;&nbsp;關於</a>
                         </li>
                     </ul>
                 </div>
@@ -364,7 +363,7 @@
                   </div>
                 </div>
 
-                <div class="panel panel-danger" style="margin: 0px;" id="warn_panel">
+                <div class="panel panel-danger" style="margin: 0px; display:none;" id="warn_panel">
                   <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;注意</h3>
                   </div>
@@ -372,23 +371,45 @@
                     <p id="warn_msg"></p>
                   </div>
                 </div>
-
-                <div class="panel panel-primary" style="margin: 0px;" id="about-panel" >
-                  <div class="panel-heading">
-                    <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;關於</h3>
-                  </div>
-                  <div class="panel-body" style="font-size:15px;">
-                    <p id="about">
-                        <ul>
-                          <li>開cheque易</li>
-                          <li>Copyright &copy; Seohea Production</li>
-                          <li>版本 1.0.0</li>
-                        </ul>
-                    </p>
-                  </div>
-                </div>
+            </div>
+            <div style="padding-bottom:90px;">
             </div>
         </div>
+
+        <!-- aboutModal -->
+        <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
+                <h4 class="modal-title" id="myModalLabel">關於</h4>
+              </div>
+              <div class="modal-body">
+                <h4>開cheque易</h4>
+                <ul>
+                  <li>版權所有 &copy; Seohea Production</li>
+                  <li>版本 1.0.1</li>
+                </ul>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span>&nbsp;關閉</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="navbar navbar-default navbar-fixed-bottom" >
+            <div class="container" style="padding:0px;">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <div class="btn-group btn-group" role="group">
+                        <button class="btn btn-success" type="button" onclick="changeclear();" id="setting-clear" style="padding:2% 0px" >點擊輸入欄時<br>不要自動清除</button>
+                    </div>
+                    <div class="btn-group btn-group" role="group">
+                        <button class="btn btn-primary" type="button" onclick="changehkstyle();" id="setting-hkstyle" style="padding:2% 0px;">正統中文大寫</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>

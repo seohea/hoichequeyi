@@ -1,4 +1,4 @@
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.seo.cheque" version="1.0.0.8">
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.seo.cheque" version="1.0.1.0">
   <name>開cheque易</name>
   <description>一個幫助你填寫支票的小幫手</description>
   <author href="" email="seohea.production@gmail.com">Seohea Production</author>
