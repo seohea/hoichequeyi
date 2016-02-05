@@ -5,7 +5,7 @@
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-        <meta name="viewport" content="user-scalable=no, initial-scale=0.5, maximum-scale=0.5, width=device-width" />
+        <meta name="viewport" content="user-scalable=no, initial-scalew=0.5, maximum-scale=0.5, width=device-width" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href='https://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
@@ -15,6 +15,39 @@
               border-radius: 0 !important;
               -moz-border-radius: 0 !important;
             }
+
+            body{
+                -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+                -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+                -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+                -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+            }
+
+            #bottomnav {
+                background-color: rgba(0,0,0,0);
+                border-color: rgba(0,0,0,0);
+            }
+
+            #bottomnav .container{
+                position: absolute;
+                padding: 0px;
+                bottom: 0px;
+            }
+
+            .panel-body{
+                padding: 10px 0px;
+                min-height: 40px;
+            }
+
+            .panel-body p{ margin: 0px; }
+
+            #warn_msg{ font-size: 16px; }
+
+            input:hover, input:focus, input:active { outline: none !important; } input { outline: none; }
+            div:hover, div:focus, div:active { outline: none !important;} div { outline: none; }
+            button:hover, button:focus, button:active { outline: none !important;} button { outline: none; }
+            a:hover { color:white !important; }
+
         </style>
 
         <title>Cheque</title>
@@ -258,6 +291,17 @@
                 return true;
             }
 
+            function numberWithoutCommas(x){
+                var parts = x.toString().split(",");
+                return parts.join("");
+            }
+
+            function numberWithCommas(x) {
+                var parts = x.toString().split(".");
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return parts.join(".");
+            }
+
             $(document).ready(function() {
                 $.support.transition = false;
 
@@ -270,11 +314,31 @@
             //------ADS
             
             function onDeviceReady() {
-              admob.createBannerView({
-                  publisherId:"ca-app-pub-9969581706012169/7609471531"
-              });
+                admob.createBannerView({
+                    publisherId:"ca-app-pub-9969581706012169/7609471531"
+                });
+
+                document.addEventListener("resume", onResume, false);
+                document.addEventListener("backbutton", onBackKeyDown, false);
+
+                initGA();
             }
-            
+
+            function onBackKeyDown() {
+ 
+                if($('.modal').is(':visible')){
+                    $('.modal').modal('hide');
+                    return false;
+                }else{
+                    navigator.app.exitApp();
+                    return false;
+                }
+            }
+
+            function onResume() {
+                initGA();
+            }
+
             document.addEventListener("deviceready", onDeviceReady, false);
             
 
@@ -299,7 +363,7 @@
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" style="border: 0px;">
                         <span class="glyphicon glyphicon-menu-hamburger" style="color:white;"></span>
                     </button>
-                    <a class="navbar-brand" style="font-size:24px; font-family: 'Righteous', cursive;"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開Cheque易</a>
+                    <a class="navbar-brand" style="font-family: 'Righteous', cursive;"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開Cheque易</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -308,12 +372,13 @@
                         <li class="hidden">
                             <a href="#page-top"></a>
                         </li>
-                        <!--li class="page-scroll">
-                            <a href="#" onclick="changeclear();" id="setting-clear">點擊輸入欄時不要自動清除</a>
+                        
+                        <li class="page-scroll">
+                            <a href="#" style="font-size:18px;" onclick="window.open('https://play.google.com/store/apps/details?id=com.seo.cheque');"><span class="glyphicon glyphicon-star" style="color:#ffff00"></span>&nbsp;&nbsp;評分及意見</a>
                         </li>
                         <li class="page-scroll">
-                            <a href="#" onclick="changehkstyle();" id="setting-hkstyle">正統中文大寫</a>
-                        </li-->
+                            <a href="#" style="font-size:18px;" onclick="window.open('https://play.google.com/store/apps/developer?id=Seohea+Production');"><span class="glyphicon glyphicon-th-large" style="color:#ff9900"></span>&nbsp;&nbsp;更多應用程式</a>
+                        </li>
                         <li class="page-scroll">
                             <a href="#" onclick="about();" id="about" style="font-size:18px;"><span class="glyphicon glyphicon-question-sign" style="color:#99cc00"></span>&nbsp;&nbsp;關於</a>
                         </li>
@@ -336,9 +401,9 @@
 
         <div class="container">
             <div class="row">
-                <div class="input-group">
-                  <span class="input-group-addon">港幣 HKD $</span>
-                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" style="font-size:16px;" oninput="convert(this.value);">
+                <div class="input-group input-group-lg">
+                  <span class="input-group-addon">$</span>
+                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" style="font-size:20px;" oninput="convert(this.value);">
                   <!--span class="input-group-btn">
                     <button class="btn btn-default" type="button" onclick="convert(document.getElementById('moneyinput').value);"><span class="glyphicon glyphicon-transfer"></span></button>
                   </span-->
@@ -363,14 +428,16 @@
                   </div>
                 </div>
 
-                <div class="panel panel-danger" style="margin: 0px; display:none;" id="warn_panel">
+                <!--div class="panel panel-danger" style="margin: 0px; display:none;" id="warn_panel">
                   <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;注意</h3>
                   </div>
                   <div class="panel-body" style=" text-align:center;">
                     <p id="warn_msg"></p>
                   </div>
-                </div>
+                </div-->
+
+                <div class="alert alert-warning" role="alert" id="warn_panel" style="display:none; text-align:center;"><p id="warn_msg"></p></div>
             </div>
             <div style="padding-bottom:90px;">
             </div>
@@ -381,14 +448,13 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><span class="glyphicon glyphicon-remove"></span></span></button>
                 <h4 class="modal-title" id="myModalLabel">關於</h4>
               </div>
               <div class="modal-body">
                 <h4>開cheque易</h4>
                 <ul>
                   <li>版權所有 &copy; Seohea Production</li>
-                  <li>版本 1.0.1</li>
+                  <li>版本 1.1</li>
                 </ul>
               </div>
               <div class="modal-footer">
@@ -398,8 +464,8 @@
           </div>
         </div>
 
-        <nav class="navbar navbar-default navbar-fixed-bottom" >
-            <div class="container" style="padding:0px;">
+        <nav class="navbar navbar-default navbar-fixed-bottom" id="bottomnav" >
+            <div class="container">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                     <div class="btn-group btn-group" role="group">
                         <button class="btn btn-success btn-lg" type="button" onclick="changeclear();" id="setting-clear" style="padding:6% 0px" >不要自動清除</button>
