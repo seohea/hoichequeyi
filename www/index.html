@@ -8,7 +8,6 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=0.5, maximum-scale=0.5, width=device-width" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href='https://fonts.googleapis.com/css?family=Righteous' rel='stylesheet' type='text/css'>
 
         <style type="text/css">
             * {
@@ -21,6 +20,8 @@
                 -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
                 -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
                 -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+
+                background-color: #d2d5db;
             }
 
             #bottomnav {
@@ -34,14 +35,71 @@
                 bottom: 0px;
             }
 
-            .panel-body{
-                padding: 10px 0px;
-                min-height: 40px;
+            #warn_msg{ 
+                font-size: 14px;
+                padding-top: 2px; 
+                text-align: left;
+                color:#2c3e50;
             }
 
-            .panel-body p{ margin: 0px; }
+            #inputgroup{
+                margin-right: 10px;
+            }
 
-            #warn_msg{ font-size: 16px; }
+            #moneyinput, #moneyinputsymbol{ 
+                padding: 5px 15px; 
+                font-size: 38px;
+                border: 0px;
+                background-color: rgba(0,0,0,0);
+            }
+
+            #moneyinputsymbol{
+                padding: 5px; 
+            }
+
+            #moneyinput{
+                -webkit-appearance: none;
+                width: 100%;
+                border-bottom: 2px solid #2c3e50;
+            }
+
+            .myPanel{
+                margin: 15px 10px;
+                padding: 5px 0px;
+                border: 0px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.23);
+                border-radius: 3px !important;
+            }
+
+            .myPanel .panel-body{
+                 text-align:center; 
+                 font-size:20px;
+                 padding: 8px;
+                 min-height: 50px;
+            }
+
+            .myPanel .panel-body p{ margin: 0px; }
+
+            .myPanel .panel-heading{
+                background-color: #ffffff;
+                color: #a6a6a6;
+                border: 0px;
+                text-align: center;
+            }
+
+            .myPanel .panel-heading h3{ font-size: 14px !important; padding: 5px; margin: 0px; }
+
+            #warn_panel{
+                text-align:center;
+                padding: 8px;
+                margin-top: 15px;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.19), 0 1px 1px rgba(0,0,0,0.30);
+            }
+
+            .navbar{
+                box-shadow: 0 1px 2px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+                border:none;
+            }
 
             input:hover, input:focus, input:active { outline: none !important; } input { outline: none; }
             div:hover, div:focus, div:active { outline: none !important;} div { outline: none; }
@@ -226,7 +284,7 @@
                     $("#setting-clear").html("自動清除");
                 }else{
                     clear = true;
-                    $("#setting-clear").html("不要自動清除"); 
+                    $("#setting-clear").html("取消自動清除"); 
                 }
                 //$('.navbar-toggle').click();
             }
@@ -235,10 +293,10 @@
                 if(hkstyle == true){
                     hkstyle = false;
                     $("#setting-hkstyle").text("港式中文大寫");
-                    $("#zh_panel").text("中文大寫");
+                    $("#zh_panel").text("普通中文大寫");
                 }else{
                     hkstyle = true;
-                    $("#setting-hkstyle").text("中文大寫");
+                    $("#setting-hkstyle").text("普通中文大寫");
                     $("#zh_panel").text("港式中文大寫");
                 }
                 convert(document.getElementById('moneyinput').value);
@@ -261,7 +319,9 @@
                 }else if (num >= 1000000000){
                     $("#warn_panel").show();
                     $("#warn_msg").text("輸入金額過大了，請重新輸入");
-                    document.getElementById('moneyinput').value = "";
+                    $('#moneyinput').val("");
+                    $("#result_eng").text("");
+                    $("#result_zh").text("");
                     return false;
                 }else if (((String(num).length - String(num).replace(/\./g,'').length)) >= 1) {
                     var cents = String(num).split(".")[1];
@@ -277,8 +337,8 @@
                             $("#result_zh").text("");
                             return false;
                         }else if(String(cents).length == 1 && cents<10){
-                            $("#warn_panel").show();
-                            $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+"0");
+                            //$("#warn_panel").show();
+                            //$("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+"0");
                         }else{
                             $("#warn_panel").hide();
                         }
@@ -288,6 +348,8 @@
                     $("#warn_msg").text("溫馨提示：請於支票上填寫 HK$"+num+".00");
                     return true;
                 }
+
+                $("#warn_msg").text("");
                 return true;
             }
 
@@ -363,7 +425,7 @@
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" style="border: 0px;">
                         <span class="glyphicon glyphicon-menu-hamburger" style="color:white;"></span>
                     </button>
-                    <a class="navbar-brand" style="font-family: 'Righteous', cursive;"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開Cheque易</a>
+                    <a class="navbar-brand"><span class="glyphicon glyphicon-credit-card"></span>&nbsp;開票易</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -388,56 +450,47 @@
         </nav>
 
         <header>
-            <div class="container" style="padding:30px 0px;">
-                <!--div class="row">
-                    <div class="col-lg-12">
-                        <div class="intro-text">
-                            <span class="skills">一個俾你了解呢個世界既地方</span>
-                        </div>
-                    </div>
-                </div-->
+            <div class="container" style="padding:36px 0px;">
             </div>
         </header>
 
         <div class="container">
             <div class="row">
-                <div class="input-group input-group-lg">
-                  <span class="input-group-addon">$</span>
-                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" style="font-size:20px;" oninput="convert(this.value);">
-                  <!--span class="input-group-btn">
-                    <button class="btn btn-default" type="button" onclick="convert(document.getElementById('moneyinput').value);"><span class="glyphicon glyphicon-transfer"></span></button>
-                  </span-->
+                <!--div class="input-group input-group-lg" id="inputgroup">
+                  <span class="input-group-addon" id="moneyinputsymbol"><span class="glyphicon glyphicon-usd"></span></span>
+                  <input type="number" name="txtNumber" class="form-control" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" oninput="convert(this.value);">
                 </div>
+                <p id="warn_msg"></p-->
+                <table id="inputgroup">
+                    <tr>
+                        <td rowspan="2"><span id="moneyinputsymbol"><span class="glyphicon glyphicon-usd"></span></span></td>
+                        <td><input type="number" name="txtNumber" aria-label="Amount (to the nearest dollar)" placeholder = "0" id="moneyinput" oninput="convert(this.value);"></td> 
+                    </tr>
+                    <tr><td><p id="warn_msg"></p></td></tr>
+                </table>
             </div>
             <div class="row">
-                <div class="panel panel-default" style="margin: 0px;">
+                <!--div class="alert alert-info" role="alert" id="warn_panel" style="display:none;"><p id="warn_msg"></p></div-->
+
+                <div class="panel panel-default myPanel">
                   <div class="panel-heading">
-                    <h3 class="panel-title">English</h3>
+                    <h3 class="panel-title">English / 英文</h3>
                   </div>
-                  <div class="panel-body" style=" text-align:center; font-size:22px;">
+                  <div class="panel-body">
                     <p id="result_eng"></p>
                   </div>
                 </div>
 
-                <div class="panel panel-default" style="margin: 0px;" >
+                <div class="panel panel-default myPanel" >
                   <div class="panel-heading">
                     <h3 class="panel-title" id="zh_panel">港式中文大寫</h3>
                   </div>
-                  <div class="panel-body" style=" text-align:center; font-size:28px;">
+                  <div class="panel-body">
                     <p id="result_zh"></p>
                   </div>
                 </div>
 
-                <!--div class="panel panel-danger" style="margin: 0px; display:none;" id="warn_panel">
-                  <div class="panel-heading">
-                    <h3 class="panel-title"><span class="glyphicon glyphicon-info-sign"></span>&nbsp;注意</h3>
-                  </div>
-                  <div class="panel-body" style=" text-align:center;">
-                    <p id="warn_msg"></p>
-                  </div>
-                </div-->
-
-                <div class="alert alert-warning" role="alert" id="warn_panel" style="display:none; text-align:center;"><p id="warn_msg"></p></div>
+                
             </div>
             <div style="padding-bottom:90px;">
             </div>
@@ -451,7 +504,7 @@
                 <h4 class="modal-title" id="myModalLabel">關於</h4>
               </div>
               <div class="modal-body">
-                <h4>開cheque易</h4>
+                <h4>開票易 / 開cheque易</h4>
                 <ul>
                   <li>版權所有 &copy; Seohea Production</li>
                   <li>版本 1.1</li>
@@ -468,10 +521,10 @@
             <div class="container">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                     <div class="btn-group btn-group" role="group">
-                        <button class="btn btn-success btn-lg" type="button" onclick="changeclear();" id="setting-clear" style="padding:6% 0px" >不要自動清除</button>
+                        <button class="btn btn-success" type="button" onclick="changeclear();" id="setting-clear" style="padding:4% 0px" >取消自動清除</button>
                     </div>
                     <div class="btn-group btn-group" role="group">
-                        <button class="btn btn-primary btn-lg" type="button" onclick="changehkstyle();" id="setting-hkstyle" style="padding:6% 0px;">中文大寫</button>
+                        <button class="btn btn-primary" type="button" onclick="changehkstyle();" id="setting-hkstyle" style="padding:4% 0px;">普通中文大寫</button>
                     </div>
                 </div>
             </div>
